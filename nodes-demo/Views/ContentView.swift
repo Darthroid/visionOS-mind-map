@@ -10,6 +10,7 @@ import RealityKit
 import RealityKitContent
 
 struct ContentView: View {
+    @Environment(AppModel.self) var appModel
     @Environment(\.openImmersiveSpace) var openImmersiveSpace
     
     var body: some View {

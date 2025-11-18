@@ -9,13 +9,17 @@ import SwiftUI
 
 @main
 struct nodes_demoApp: App {
+    @State private var appModel: AppModel = AppModel()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(appModel)
         }
         
         ImmersiveSpace(id: "NodeMapView") {
             NodeMapView()
+                .environment(appModel)
         }
 
     }

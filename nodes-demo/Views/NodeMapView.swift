@@ -10,49 +10,13 @@ import RealityKit
 import RealityKitContent
 
 struct NodeMapView: View {
-    let nodes: [Node] = [
-        .init(
-            name: "test node",
-            description: "This is a test node",
-            x: 0,
-            y: 0,
-            z: 0
-        ),
-        .init(
-            name: "node one",
-            description: "This is a test node",
-            x: -0.4201641,
-            y: 1.5058086,
-            z: -1.5
-        ),.init(
-            name: "node two",
-            description: "This is a test node",
-            x: -0.058503926,
-            y: 1.4341328,
-            z: -1.5
-        ),
-        .init(
-            name: "node three",
-            description: "This is a test node",
-            x: -0.38982427,
-            y: 1.3047304,
-            z: -1.5
-        ),
-        .init(
-            name: "very long center node",
-            description: "This is a test node",
-            x: -0.26737112,
-            y: 1.4024374,
-            z: -1.5
-        )
-    ]
-    
+    @Environment(AppModel.self) var appModel
     @State private var draggedEntity: Entity?
     @State private var nodePositions: [String: SIMD3<Float>] = [:]
 
     var body: some View {
         RealityView { content in
-            for node in nodes {
+            for node in appModel.nodes {
                 let capsuleEntity = createGlassCapsuleNode(for: node)
                 content.add(capsuleEntity)
             }
@@ -73,7 +37,7 @@ struct NodeMapView: View {
                 }
                 
                 let newPosition = value.convert(value.location3D, from: .local, to: .scene)
-                value.entity.position = applyMovementConstraints(position: newPosition)
+                value.entity.position = newPosition//applyMovementConstraints(position: newPosition)
             }
             .onEnded { value in
                 guard value.entity.components[NodeDataComponent.self] != nil else { return }
