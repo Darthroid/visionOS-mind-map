@@ -12,36 +12,52 @@ import RealityKitContent
 struct ContentView: View {
     @Environment(AppModel.self) var appModel
     @Environment(\.openImmersiveSpace) var openImmersiveSpace
+    @Environment(\.dismissImmersiveSpace) var dismissImmersiveSpace
     @State var selectedNodeId: String?
     @State var showNodeForm: Bool = false
+    @State var showNodeSpace: Bool = false
     
     var body: some View {
-        NavigationSplitView(sidebar: {
+        
+        NavigationStack {
             List(appModel.nodes, selection: $selectedNodeId) { node in
-                VStack(alignment: .leading) {
-                    Text(node.name)
-                        .font(.headline)
-                    Text(node.positionDescription)
-                        .font(.footnote)
+                NavigationLink {
+                    NodeDetailView(node: node)
+                } label: {
+                    VStack(alignment: .leading) {
+                        Text(node.name)
+                            .font(.headline)
+                        Text(node.positionDescription)
+                            .font(.footnote)
+                    }
                 }
             }
-            .toolbar(content: {
-                Button {
-                    showNodeForm = true
-                } label: {
-                    Image(systemName: "plus")
-                }
-            })
             .navigationTitle(Text("Nodes Demo"))
-        }, detail: {
-            Text("""
-                Use gestures to move nodes
-                Click on the node to show detail information
-                """
-            )
-            .foregroundStyle(.secondary)
-            .multilineTextAlignment(.center)
-        })
+            .toolbar {
+                HStack {
+                    Button {
+                        showNodeForm = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                    
+                    Button {
+                        showNodeSpace.toggle()
+                        if showNodeSpace {
+                            Task {
+                                await openImmersiveSpace(id: "NodeMapView")
+                            }
+                        } else {
+                            Task {
+                                await dismissImmersiveSpace()
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "graph.3d")
+                    }
+                }
+            }
+        }
         .sheet(isPresented: $showNodeForm) {
             CreateNodeView()
                 .environment(appModel)
@@ -49,11 +65,6 @@ struct ContentView: View {
         .onChange(of: selectedNodeId, { oldValue, newValue in
             appModel.selectedNodeId = newValue
         })
-        .onAppear {
-            Task {
-                await openImmersiveSpace(id: "NodeMapView")
-            }
-        }
     }
 }
 

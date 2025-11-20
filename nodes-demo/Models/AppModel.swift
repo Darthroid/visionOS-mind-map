@@ -21,6 +21,10 @@ final class AppModel: Sendable {
         self.connections = MockData.connections
     }
     
+    func node(forId id: String) -> Node? {
+        return nodes.first(where: { $0.id == id })
+    }
+    
     func addNode(name: String, description: String, position: (x: Float, y: Float, z: Float)?) {
         let _position: (x: Float, y: Float, z: Float)
             
