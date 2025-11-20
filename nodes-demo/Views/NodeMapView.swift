@@ -12,9 +12,9 @@ import RealityKitContent
 struct NodeMapView: View {
     @Environment(AppModel.self) var appModel
     @State private var draggedEntity: Entity?
-    @State private var nodePositions: [String: SIMD3<Float>] = [:]
     @State private var entityMap: [String: Entity] = [:]
     @State private var realityViewContent: RealityViewContent?
+    @State var initialDragPosition: SIMD3<Float> = .zero
     
     var body: some View {
         RealityView { content in
@@ -66,10 +66,14 @@ struct NodeMapView: View {
                 if draggedEntity == nil {
                     draggedEntity = value.entity
                     animateEntityScale(value.entity, to: 1.1)
+                    initialDragPosition = value.entity.position
                 }
                 
-                let newPosition = value.convert(value.location3D, from: .local, to: .scene)
-                value.entity.position = newPosition
+                // Calculate vector by which to move the entity
+                let movement = value.convert(value.gestureValue.translation3D, from: .local, to: .scene)
+                
+                // Add the initial position and the movement to get the new position
+                value.entity.position = initialDragPosition + movement
             }
             .onEnded { value in
                 guard value.entity.components[NodeDataComponent.self] != nil else { return }
@@ -260,14 +264,6 @@ struct NodeMapView: View {
         
         // Animate scale change
         animateEntityScale(entity, to: isSelected ? 1.2 : 1.0)
-    }
-    
-    private func applyMovementConstraints(position: SIMD3<Float>) -> SIMD3<Float> {
-        var constrained = position
-        constrained.x = min(max(constrained.x, -1.0), 1.0)
-        constrained.y = min(max(constrained.y, -1.0), 1.0)
-        constrained.z = min(max(constrained.z, -3.0), -0.5)
-        return constrained
     }
     
     private func animateEntityScale(_ entity: Entity, to scale: Float) {
