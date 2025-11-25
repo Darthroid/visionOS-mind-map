@@ -19,7 +19,6 @@ final class AppModel: Sendable {
         container?.mainContext
     }
     
-    
     var nodes: [Node] = []
     var connections: [NodeConnection] = []
     var selectedNodeId: String?
@@ -48,7 +47,7 @@ final class AppModel: Sendable {
                 _position = providedPosition
             } else if nodes.isEmpty {
                 // If no nodes exist, place in the center
-                _position = (0, 0, 0)
+                _position = (0, 1.0, -1.5)
             } else {
                 // Calculate center position of all existing nodes
                 let totalX = nodes.reduce(0.0) { $0 + $1.x }
@@ -74,6 +73,14 @@ final class AppModel: Sendable {
         context?.insert(node)
         try? context?.save()
         fetchItems()
+    }
+    
+    func removeNode(at indexSet: IndexSet) {
+        let nodesToDelete = nodes.enumerated()
+            .filter { indexSet.contains($0.offset) }
+            .map { $0.element }
+        
+        nodesToDelete.forEach { removeNode($0) }
     }
     
     func removeNode(_ node: Node) {

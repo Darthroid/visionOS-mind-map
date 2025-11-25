@@ -25,18 +25,23 @@ struct ContentView: View {
                     Text("Press + to add a new node")
                         .foregroundStyle(.secondary)
                 } else {
-                    List(appModel.nodes, selection: $selectedNodeId) { node in
-                        NavigationLink {
-                            NodeDetailView(node: node)
-                        } label: {
-                            VStack(alignment: .leading) {
-                                Text(node.name)
-                                    .font(.headline)
-                                Text(node.positionDescription)
-                                    .font(.footnote)
-                            }
-                        }
-                    }
+                    NodeMapView()
+                        .environment(appModel)
+//                    List(selection: $selectedNodeId) {
+//                        ForEach(appModel.nodes) { node in
+//                            NavigationLink {
+//                                NodeDetailView(node: node)
+//                            } label: {
+//                                VStack(alignment: .leading) {
+//                                    Text(node.name)
+//                                        .font(.headline)
+//                                    Text(node.positionDescription)
+//                                        .font(.footnote)
+//                                }
+//                            }
+//                        }
+//                        .onDelete(perform: appModel.removeNode(at:))
+//                    }
                 }
             }
             .navigationTitle(Text("Nodes Demo"))
@@ -52,7 +57,7 @@ struct ContentView: View {
                         showNodeSpace.toggle()
                         if showNodeSpace {
                             Task {
-                                await openImmersiveSpace(id: "NodeMapView")
+                                await openImmersiveSpace(id: "ImmersiveNodeMapView")
                             }
                         } else {
                             Task {

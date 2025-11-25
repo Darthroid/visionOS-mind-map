@@ -17,8 +17,8 @@ struct nodes_demoApp: App {
                 .environment(appModel)
         }
         
-        ImmersiveSpace(id: "NodeMapView") {
-            NodeMapView()
+        ImmersiveSpace(id: "ImmersiveNodeMapView") {
+            ImmersiveNodeMapView()
                 .environment(appModel)
         }
 
