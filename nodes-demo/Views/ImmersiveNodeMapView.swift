@@ -282,26 +282,75 @@ struct ImmersiveNodeMapView: View {
     }
     
     private func calculateDynamicSize(for node: Node, isSelected: Bool) -> (width: Float, height: Float) {
-        let staticFontSize: Float = Constant.fontSize
-        let minWidth: Float = 0.1
-        let baseHeight: Float = 0.04
+        let staticFontSize: Float = isSelected ? Constant.fontSize * 0.8 : Constant.fontSize
+
+        // For unselected nodes: keep original behavior
+        if !isSelected {
+            let minWidth: CGFloat = 0.1
+            let baseHeight: Float = 0.04
+            let padding: Float = 0.03
+
+            let textToMeasure = node.name
+            let font: MeshResource.Font = .boldSystemFont(ofSize: CGFloat(staticFontSize))
+
+            let size = (textToMeasure as NSString)
+                .components(separatedBy: "\n")
+                .filter { !$0.isEmpty }
+                .map { $0.size(withAttributes: [.font: font]) }
+
+            let width = Float(size.map { $0.width }.max() ?? minWidth)
+            let height = Float(size.map({ $0.height }).reduce(0, +))
+
+            let calculatedWidth = width + padding
+            let calculatedHeight = height
+
+            return (max(calculatedWidth, Float(minWidth)), max(calculatedHeight, baseHeight))
+        }
+
+        // For selected nodes: use fixed-width logic
+        let maxWidth: Float = 0.5 // Maximum width for capsules with long text
+        let minWidth: Float = 0.06 // Minimum width for very short text
         let expandedHeight: Float = 0.06
-        let padding: Float = 0.06
-        
-        let textToMeasure = isSelected && !node.detail.isEmpty ?
-            "\(node.name)\n\(node.detail)" :
+        let padding: Float = 0.03
+
+        let textToMeasure = !node.detail.isEmpty ?
+        "\(node.name)\n \n\(node.detail)" :
             node.name
-        
-        let textLength = Float(textToMeasure.count)
-        let calculatedWidth = textLength * staticFontSize * 0.3 + padding
-        
-        let height = (isSelected && !node.detail.isEmpty) ? expandedHeight : baseHeight
-        
-        return (max(calculatedWidth, minWidth), height)
+
+        // Calculate proper dimensions with text wrapping
+        let textContainer = CGRect(
+            x: 0,
+            y: 0,
+            width: CGFloat(maxWidth - padding * 2), // Use maxWidth for container
+            height: .greatestFiniteMagnitude
+        )
+
+        // Create an attributed string with appropriate font
+        let attributedString = NSAttributedString(
+            string: textToMeasure,
+            attributes: [.font: UIFont.systemFont(ofSize: CGFloat(staticFontSize))]
+        )
+
+        // Calculate bounding rect with word wrapping
+        let boundingRect = attributedString.boundingRect(
+            with: textContainer.size,
+            options: [.usesLineFragmentOrigin, .usesFontLeading],
+            context: nil
+        )
+
+        // Calculate required width (but don't exceed maxWidth)
+        let requiredWidth = Float(boundingRect.width) + padding * 2
+        let finalWidth = min(max(requiredWidth, minWidth), maxWidth)
+        let calculatedHeight = Float(boundingRect.height) + padding * 2
+
+        return (
+            finalWidth,
+            max(calculatedHeight, expandedHeight)
+        )
     }
 
     private func createCapsule(width: Float, height: Float, for node: Node, isSelected: Bool) -> ModelEntity {
-        let cornerRadius: Float = height / 2
+        let cornerRadius: Float = 0.02
 
         let capsuleMesh = MeshResource.generatePlane(
             width: width,
