@@ -13,6 +13,8 @@ struct NodeDetailView: View {
     
     @State var showDeleteConfirmation: Bool = false
     
+    @State var showEditor: Bool = false
+    
     var node: Node
     
     var body: some View {
@@ -22,18 +24,26 @@ struct NodeDetailView: View {
             HStack {
                 Text("Position:")
                     .fontWeight(.semibold)
-                Text(node.positionDescription)
+                Text(node.positionDescriptionMeters)
             }
             .font(.caption)
             
             Spacer()
             
             HStack {
+                Spacer()
                 Button {
                     showDeleteConfirmation.toggle()
                 } label: {
                     Text("Delete")
                 }
+                
+                Button {
+                    showEditor.toggle()
+                } label: {
+                    Text("Edit")
+                }
+                
             }
         }
         .toolbar {
@@ -44,6 +54,9 @@ struct NodeDetailView: View {
             }
         }
         .navigationTitle(node.name)
+        .sheet(isPresented: $showEditor) {
+            EditNodeView(node: node)
+        }
         .alert(
             Text("Delete node"),
             isPresented: $showDeleteConfirmation,

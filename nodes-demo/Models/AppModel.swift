@@ -74,6 +74,17 @@ final class AppModel: Sendable {
         save()
     }
     
+    func updateNode(id: String, with node: Node) {
+        if let objectToUpdate = try? context?.fetch(FetchDescriptor<Node>(predicate: #Predicate { $0.id == id })).first {
+            objectToUpdate.x = node.x
+            objectToUpdate.y = node.y
+            objectToUpdate.z = node.z
+            objectToUpdate.name = node.name
+            objectToUpdate.detail = node.detail
+        }
+        save()
+    }
+    
     func removeNode(at indexSet: IndexSet) {
         let nodesToDelete = nodes.enumerated()
             .filter { indexSet.contains($0.offset) }

@@ -1,28 +1,28 @@
 //
-//  CreateNodeView.swift
+//  EditNodeVIew.swift
 //  nodes-demo
 //
-//  Created by Олег Комаристый on 20.11.2025.
+//  Created by Олег Комаристый on 04.12.2025.
 //
+
 
 import SwiftUI
 
-struct CreateNodeView: View {
+struct EditNodeView: View {
     @Environment(AppModel.self) var appModel
     @Environment(\.dismiss) var dismiss
-    
-    @State var name: String = ""
-    @State var detail: String = ""
+
+    @State var node: Node
     
     var body: some View {
         NavigationStack {
             VStack{
                 Form {
-                    TextField(text: $name) {
+                    TextField(text: $node.name) {
                         Text("Name")
                     }
                     
-                    TextField(text: $detail) {
+                    TextField(text: $node.detail) {
                         Text("Description")
                     }
                 }
@@ -34,15 +34,15 @@ struct CreateNodeView: View {
                         dismiss()
                     }
                     
-                    Button("Create") {
-                        appModel.addNode(name: name, detail: detail, position: nil)
+                    Button("Save") {
+                        appModel.updateNode(id: node.id, with: node)
                         dismiss()
                     }
-                    .disabled(name.isEmpty && detail.isEmpty)
+                    .disabled(node.name.isEmpty && node.detail.isEmpty)
                 }
             }
             .padding()
-            .navigationTitle(Text("Create Node"))
+            .navigationTitle(Text("Edit \(node.name)"))
         }
     }
 }
