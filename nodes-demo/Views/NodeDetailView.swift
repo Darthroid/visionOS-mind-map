@@ -21,14 +21,31 @@ struct NodeDetailView: View {
     
     var body: some View {
         VStack(alignment: .leading) {
+            Text("Description:")
+                .font(.title)
+                .padding(.bottom)
             Text(node.detail)
             
-            HStack {
-                Text("Position:")
-                    .fontWeight(.semibold)
-                Text(node.positionDescriptionMeters)
+            Text("Position:")
+                .font(.title)
+                .padding(.vertical)
+            Text(node.positionDescriptionMeters)
+            
+            if appModel.hasConnection(nodeId: node.id) {
+                Text("Connected Nodes")
+                    .font(.title)
+                    .padding(.vertical)
+                List(appModel.nodesConnectedWith(node: node)) { node in
+                    VStack(alignment: .leading) {
+                        Text(node.name)
+                            .font(.headline)
+                        Text(node.positionDescription)
+                            .font(.footnote)
+                    }
+                    .listRowInsets(.init(top: 0, leading: -20, bottom: 0, trailing: -20))
+                }
+                .listStyle(.plain)
             }
-            .font(.caption)
             
             Spacer()
             
@@ -65,7 +82,7 @@ struct NodeDetailView: View {
         }
         .navigationTitle(node.name)
         .sheet(isPresented: $showEditor) {
-            EditNodeView(node: node)
+            EditNodeView(nodeId: node.id, name: node.name, detail: node.detail)
         }
         .sheet(isPresented: $showLinkEditor) {
             LinkEditorView(fromNode: node)

@@ -11,18 +11,20 @@ import SwiftUI
 struct EditNodeView: View {
     @Environment(AppModel.self) var appModel
     @Environment(\.dismiss) var dismiss
-
-    @State var node: Node
+    
+    var nodeId: String
+    @State var name: String
+    @State var detail: String
     
     var body: some View {
         NavigationStack {
             VStack{
                 Form {
-                    TextField(text: $node.name) {
+                    TextField(text: $name) {
                         Text("Name")
                     }
                     
-                    TextField(text: $node.detail) {
+                    TextField(text: $detail) {
                         Text("Description")
                     }
                 }
@@ -35,14 +37,14 @@ struct EditNodeView: View {
                     }
                     
                     Button("Save") {
-                        appModel.updateNode(id: node.id, with: node)
+                        appModel.updateNode(id: nodeId, name: name, detail: detail)
                         dismiss()
                     }
-                    .disabled(node.name.isEmpty && node.detail.isEmpty)
+                    .disabled(name.isEmpty && detail.isEmpty)
                 }
             }
             .padding()
-            .navigationTitle(Text("Edit \(node.name)"))
+            .navigationTitle(Text("Edit Node"))
         }
     }
 }

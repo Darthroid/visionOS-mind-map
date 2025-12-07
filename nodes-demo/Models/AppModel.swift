@@ -44,6 +44,20 @@ final class AppModel: Sendable {
         return connections.contains(where: { $0.fromNodeId == nodeId || $0.toNodeId == nodeId })
     }
     
+    func nodesConnectedWith(node: Node) -> [Node] {
+        let connections = connections.filter { $0.fromNodeId == node.id || $0.toNodeId == node.id }
+        var nodes: [Node] = []
+        
+        for c in connections {
+            let otherNodeId = c.fromNodeId == node.id ? c.toNodeId : c.fromNodeId
+            if let otherNode = self.node(forId: otherNodeId) {
+                nodes.append(otherNode)
+            }
+        }
+        
+        return nodes
+    }
+    
     func addNode(name: String, detail: String, position: (x: Float, y: Float, z: Float)?) {
         let _position: (x: Float, y: Float, z: Float)
             
@@ -85,6 +99,14 @@ final class AppModel: Sendable {
             objectToUpdate.z = node.z
             objectToUpdate.name = node.name
             objectToUpdate.detail = node.detail
+        }
+        save()
+    }
+    
+    func updateNode(id: String, name: String, detail: String) {
+        if let objectToUpdate = try? context?.fetch(FetchDescriptor<Node>(predicate: #Predicate { $0.id == id })).first {
+            objectToUpdate.name = name
+            objectToUpdate.detail = detail
         }
         save()
     }
