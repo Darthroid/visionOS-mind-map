@@ -15,6 +15,8 @@ struct NodeDetailView: View {
     
     @State var showEditor: Bool = false
     
+    @State var showLinkEditor: Bool = false
+    
     var node: Node
     
     var body: some View {
@@ -38,6 +40,14 @@ struct NodeDetailView: View {
                     Text("Delete")
                 }
                 
+                Button(appModel.hasConnection(nodeId: node.id) ? "Unlink" : "Link") {
+                    if appModel.hasConnection(nodeId: node.id) {
+                        appModel.removeConnection(nodeId: node.id)
+                    } else {
+                        showLinkEditor.toggle()
+                    }
+                }
+                
                 Button {
                     showEditor.toggle()
                 } label: {
@@ -56,6 +66,9 @@ struct NodeDetailView: View {
         .navigationTitle(node.name)
         .sheet(isPresented: $showEditor) {
             EditNodeView(node: node)
+        }
+        .sheet(isPresented: $showLinkEditor) {
+            LinkEditorView(fromNode: node)
         }
         .alert(
             Text("Delete node"),

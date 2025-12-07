@@ -40,6 +40,10 @@ final class AppModel: Sendable {
         return nodes.first(where: { $0.id == id })
     }
     
+    func hasConnection(nodeId: String) -> Bool {
+        return connections.contains(where: { $0.fromNodeId == nodeId || $0.toNodeId == nodeId })
+    }
+    
     func addNode(name: String, detail: String, position: (x: Float, y: Float, z: Float)?) {
         let _position: (x: Float, y: Float, z: Float)
             
@@ -139,6 +143,12 @@ final class AppModel: Sendable {
     func removeConnection(_ connection: NodeConnection) {
         context?.delete(connection)
         save()
+    }
+    
+    func removeConnection(nodeId: String) {
+        if let connection = connections.first(where: { $0.fromNodeId == nodeId || $0.toNodeId == nodeId }) {
+            removeConnection(connection)
+        }
     }
     
     func fetchItems() {
