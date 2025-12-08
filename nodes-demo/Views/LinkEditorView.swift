@@ -15,10 +15,19 @@ struct LinkEditorView: View {
     
     @State var selectedNodeId: String?
     
+    @State var searchText: String = ""
+    
     var body: some View {
         NavigationStack {
             List(selection: $selectedNodeId) {
-                ForEach(appModel.nodes.filter { $0.id != fromNode.id }) { node in
+                ForEach(
+                    appModel.nodes
+                        .filter { $0.id != fromNode.id }
+                        .filter {
+                            guard !searchText.isEmpty else { return true }
+                            return $0.name.localizedCaseInsensitiveContains(searchText)
+                        }
+                ) { node in
                     VStack(alignment: .leading) {
                         Text(node.name)
                             .font(.headline)
@@ -27,8 +36,14 @@ struct LinkEditorView: View {
                     }
                 }
             }
+            .searchable(text: $searchText)
             .padding()
             .navigationTitle(Text("Add Link To \(fromNode.name)"))
+            .toolbar {
+                Button("Cancel") {
+                    dismiss()
+                }
+            }
         }
         .onChange(of: selectedNodeId) { oldValue, newValue in
             guard let toNodeId = newValue else { return }
