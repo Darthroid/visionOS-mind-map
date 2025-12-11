@@ -28,7 +28,9 @@ struct NodeDetailView: View {
                 Text("No description")
                     .foregroundColor(Color(uiColor: .secondaryLabel))
             } else {
-                Text(node.detail)
+                ScrollView {
+                    Text(node.detail)
+                }
             }
             
             Text("Position:")
@@ -117,8 +119,8 @@ struct NodeDetailView: View {
             },
             message: {
                 Text("Are you sure you want to delete this node?")
-            })
-        
+            }
+        )
         .padding()
     }
 }

@@ -104,10 +104,10 @@ struct NodeView: View {
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                 
-                if isSelected, !node.detail.isEmpty {
-                    Text(node.detail)
+                if isSelected {
+                    Text(node.detail.isEmpty ? "No description" : node.detail)
                         .font(.system(size: 14))
-                        .foregroundColor(.white.opacity(0.9))
+                        .foregroundColor(.white.opacity(node.detail.isEmpty ? 0.6 : 0.9))
                         .multilineTextAlignment(.center)
                 }
             }
@@ -136,7 +136,7 @@ struct NodeView: View {
         .transition(.scale.combined(with: .opacity))
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isSelected)
         .sheet(isPresented: $showDetail) {
-            NavigationView {
+            NavigationStack {
                 NodeDetailView(node: node)
             }
         }
