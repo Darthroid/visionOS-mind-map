@@ -60,6 +60,10 @@ struct NodeDetailView: View {
                                 }
                                 .buttonStyle(.borderless)
                             }
+                            .onTapGesture {
+                                dismiss()
+                                appModel.selectedNodeId = connectedNode.id
+                            }
                         }
                         .listStyle(.plain)
                     }
