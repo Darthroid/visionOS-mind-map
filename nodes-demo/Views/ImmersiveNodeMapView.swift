@@ -372,7 +372,7 @@ struct ImmersiveNodeMapView: View {
         )
 
         let material = SimpleMaterial(
-            color: .white,
+            color: .init(node.color ?? .white),
             isMetallic: false
         )
 

@@ -126,7 +126,7 @@ struct NodeView: View {
         .background(
             RoundedRectangle(cornerRadius: 25)
                 .stroke(.gray, lineWidth: 1)
-                .fill(Color(uiColor: .white))
+                .fill(node.color ?? .white)
                 .shadow(
                     color: .black.opacity(isSelected ? 0.5 : 0.3),
                     radius: isSelected ? 10 : 6,

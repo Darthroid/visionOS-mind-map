@@ -100,7 +100,12 @@ struct NodeDetailView: View {
         }
         .navigationTitle(node.name)
         .sheet(isPresented: $showEditor) {
-            EditNodeView(nodeId: node.id, name: node.name, detail: node.detail)
+            EditNodeView(
+                nodeId: node.id,
+                name: node.name,
+                detail: node.detail,
+                color: node.color ?? .white
+            )
         }
         .sheet(isPresented: $showLinkEditor) {
             LinkEditorView(fromNode: node)

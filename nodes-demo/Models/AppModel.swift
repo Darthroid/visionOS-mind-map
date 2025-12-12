@@ -58,7 +58,7 @@ final class AppModel: Sendable {
         return nodes
     }
     
-    func addNode(name: String, detail: String, position: (x: Float, y: Float, z: Float)?) {
+    func addNode(name: String, detail: String, position: (x: Float, y: Float, z: Float)?, color: String? = nil) {
         let _position: (x: Float, y: Float, z: Float)
             
             if let providedPosition = position {
@@ -85,7 +85,8 @@ final class AppModel: Sendable {
             detail: detail,
             x: _position.x,
             y: _position.y,
-            z: _position.z
+            z: _position.z,
+            color: color
         )
         
         context?.insert(node)
@@ -99,14 +100,16 @@ final class AppModel: Sendable {
             objectToUpdate.z = node.z
             objectToUpdate.name = node.name
             objectToUpdate.detail = node.detail
+            objectToUpdate.colorRaw = node.colorRaw
         }
         save()
     }
     
-    func updateNode(id: String, name: String, detail: String) {
+    func updateNode(id: String, name: String, detail: String, color: String? = nil) {
         if let objectToUpdate = try? context?.fetch(FetchDescriptor<Node>(predicate: #Predicate { $0.id == id })).first {
             objectToUpdate.name = name
             objectToUpdate.detail = detail
+            objectToUpdate.colorRaw = color
         }
         save()
     }

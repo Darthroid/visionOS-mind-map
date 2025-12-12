@@ -15,23 +15,33 @@ struct EditNodeView: View {
     var nodeId: String
     @State var name: String
     @State var detail: String
+    @State var color: Color
     
     var body: some View {
         NavigationStack {
-            VStack{
-//                Form {
-                    TextField(text: $name, axis: .vertical) {
-                        Text("Name")
-                    }
-                    .lineLimit(2...3)
-                    .textFieldStyle(.roundedBorder)
-                    
-                    TextField(text: $detail, axis: .vertical) {
-                        Text("Description")
-                    }
-                    .lineLimit(5...10)
-                    .textFieldStyle(.roundedBorder)
-//                }
+            VStack(alignment: .leading){
+                Text("Name:")
+                    .font(.title)
+                    .padding(.bottom)
+                TextField(text: $name, axis: .vertical) {
+                    Text("Enter Name")
+                }
+                .lineLimit(2...3)
+                .textFieldStyle(.roundedBorder)
+                
+                Text("Description:")
+                    .font(.title)
+                    .padding(.vertical)
+                TextField(text: $detail, axis: .vertical) {
+                    Text("Enter Description (optional)")
+                }
+                .lineLimit(5...10)
+                .textFieldStyle(.roundedBorder)
+                
+                Text("Color:")
+                    .font(.title)
+                    .padding(.vertical)
+                ColorPicker("Choose a color", selection: $color)
                 
                 Spacer()
                 
@@ -43,7 +53,12 @@ struct EditNodeView: View {
                     }
                     
                     Button("Save") {
-                        appModel.updateNode(id: nodeId, name: name, detail: detail)
+                        appModel.updateNode(
+                            id: nodeId,
+                            name: name,
+                            detail: detail,
+                            color: color.toHex()
+                        )
                         dismiss()
                     }
                     .disabled(name.isEmpty && detail.isEmpty)

@@ -13,23 +13,33 @@ struct CreateNodeView: View {
     
     @State var name: String = ""
     @State var detail: String = ""
+    @State var color = Color.white
     
     var body: some View {
         NavigationStack {
-            VStack{
-//                Form {
-                    TextField(text: $name, axis: .vertical) {
-                        Text("Name")
-                    }
-                    .lineLimit(2...3)
-                    .textFieldStyle(.roundedBorder)
-                        
-                    TextField(text: $detail, axis: .vertical) {
-                        Text("Description")
-                    }
-                    .lineLimit(5...10)
-                    .textFieldStyle(.roundedBorder)
-//                }
+            VStack(alignment: .leading) {
+                Text("Name:")
+                    .font(.title)
+                    .padding(.bottom)
+                TextField(text: $name, axis: .vertical) {
+                    Text("Enter Name")
+                }
+                .lineLimit(2...3)
+                .textFieldStyle(.roundedBorder)
+                
+                Text("Description:")
+                    .font(.title)
+                    .padding(.vertical)
+                TextField(text: $detail, axis: .vertical) {
+                    Text("Enter Description (optional)")
+                }
+                .lineLimit(5...10)
+                .textFieldStyle(.roundedBorder)
+                
+                Text("Color:")
+                    .font(.title)
+                    .padding(.vertical)
+                ColorPicker("Choose a color", selection: $color)
                 
                 Spacer()
                 
@@ -41,10 +51,15 @@ struct CreateNodeView: View {
                     }
                     
                     Button("Create") {
-                        appModel.addNode(name: name, detail: detail, position: nil)
+                        appModel.addNode(
+                            name: name,
+                            detail: detail,
+                            position: nil,
+                            color: color.toHex(includeAlpha: true)
+                        )
                         dismiss()
                     }
-                    .disabled(name.isEmpty && detail.isEmpty)
+                    .disabled(name.isEmpty)
                 }
             }
             .padding()
